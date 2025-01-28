@@ -1,36 +1,38 @@
 {% set name = "unittest2" %}
 {% set version = "1.1.0" %}
-{% set sha256 = "22882a0e418c284e1f718a822b3b022944d53d2d908e1690b319a9d3eb2c0579" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: {{ sha256 }}
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: 22882a0e418c284e1f718a822b3b022944d53d2d908e1690b319a9d3eb2c0579
   patches:
     - no-argparse-req.patch
 
 build:
-  number: 0
+  number: 1
   noarch: python
-  script: python -m pip install --no-deps --ignore-installed .
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   entry_points:
     - unit2 = unittest2.__main__:main_
 
 requirements:
   host:
-    - python <3
+    - python {{ python_min }}
+    - setuptools
     - pip
     - six >=1.4
     - traceback2
   run:
-    - python <3
+    - python >={{ python_min }},<3
     - six >=1.4
     - traceback2
 
 test:
+  requires:
+    - python {{ python_min }}
   imports:
     - unittest2
   commands:
